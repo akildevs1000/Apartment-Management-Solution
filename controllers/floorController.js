@@ -49,11 +49,10 @@ const destroy = async (req, res) => {
 };
 
 const store = async (req, res) => {
-  let floor = await Floor.create({
-    floor_number: req.body.floor_number || "00",
-  });
-
   try {
+    let floor = await Floor.create({
+      floor_number: req.body.floor_number || "00",
+    });
     floor = await Floor.findOne({
       include: Flat,
       attributes: ["id", "floor_number"],

@@ -1,4 +1,6 @@
 const express = require("express");
+const cors = require("cors");
+
 const app = express();
 const port = 8080;
 
@@ -8,6 +10,11 @@ const floorCtrl = require("./controllers/floorController.js");
 const flatCtrl = require("./controllers/flatController.js");
 const tennantCtrl = require("./controllers/tennantCtrl.js");
 
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 app.use(express.json());
 
 app.get("/test", testCtrl.test);

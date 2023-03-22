@@ -62,8 +62,11 @@ const store = async (req, res) => {
       from: req.body.from,
       to: req.body.to,
     };
-
-    res.send(await Tennant.create(payload));
+    await Tennant.create(payload);
+    res.send({
+      status: true,
+      message: "Tennant created.",
+    });
   } catch (error) {
     res.send(error);
   }
