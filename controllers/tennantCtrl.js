@@ -4,6 +4,29 @@ const Flat = db.flat;
 const Floor = db.floor;
 const Tennant = db.tennant;
 
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: "./uploads/images",
+
+  filename: (req, { originalname }, cb) => {
+    const allowedExtensions = [".jpg", ".jpeg", ".png", ".gif"];
+
+    const extension = path.extname(originalname);
+
+    if (!allowedExtensions.includes(extension)) {
+      return cb(new Error("Invalid file extension"));
+    }
+
+    return cb(null, uuidv4() + extension);
+  },
+});
+
+const upload = multer({ storage }).single("photo");
+const otherUploads = multer({ storage }).none();
+
 const index = async (req, res) => {
   res.send(
     await Tennant.findAll({
@@ -48,36 +71,22 @@ const destroy = async (req, res) => {
   }
 };
 
-const store = async (req, res) => {
-  try {
-    let payload = {
-      name: req.body.name,
-      floor_id: req.body.floor_id,
-      flat_id: req.body.flat_id,
-      photo: req.body.photo,
-      email: req.body.email,
-      gender: req.body.gender,
-      tel: req.body.tel,
-      mobile: req.body.mobile,
-      from: req.body.from,
-      to: req.body.to,
-    };
-    await Tennant.create(payload);
-    res.send({
-      status: true,
-      message: "Tennant created.",
-    });
-  } catch (error) {
-    res.send(error);
-  }
-
-  //   res.send(
-  //     await Tennant.findAll({
-  //       include: [Floor, Flat],
-  //     })
-  //   );
-
-  //   res.send({ id: req.params.id, logo: req.body.logo });
+const store = (req, res) => {
+  upload(req, res, async (err) => {
+    try {
+      if (err) {
+        return res.status(400).json({ status: false, message: err.message });
+      }
+      req.body.photo = req.file.filename;
+      await Tennant.create(req.body);
+      res.send({
+        status: true,
+        message: "Tennant created.",
+      });
+    } catch ({ message }) {
+      res.status(500).json({ status: false, message });
+    }
+  });
 };
 
 module.exports = {
