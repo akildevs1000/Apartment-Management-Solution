@@ -137,21 +137,41 @@ function onFileSelected(event) {
   reader.readAsDataURL(file);
   reader.onload = () => {
     payload.value.photo = reader.result;
+    let ext = file.name.substring(file.name.lastIndexOf(".") + 1);
+
+    const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
+
+    if (!allowedExtensions.includes(ext)) {
+      alert("Invalid file extension");
+      return;
+    }
+
     payload.value.ext = file.name.substring(file.name.lastIndexOf(".") + 1);
   };
 }
 
 async function submit() {
-  console.log(payload.value);
-  const { data, errors } = await useFetch("http://localhost:8080/tennant", {
-    method: "post",
-    body: payload.value,
-  });
-  if (data.value.status) {
-    alert(data.value.message);
-    return;
+  // console.log(payload.value);
+  // return;
+  try {
+    const { data, errors } = await useFetch("http://localhost:8080/tennant", {
+      method: "post",
+      body: payload.value,
+    });
+    if (data.value && data.value.status) {
+      alert("Tenant create");
+      console.log(data.value);
+      return;
+    }
+
+    if (!payload.value.ext) {
+      alert("Select Image");
+      return;
+    }
+  } catch (err) {
+    alert("Tenant cannot create");
+    console.log(err);
   }
-  alert("Tenant cannot create");
 }
 let flats = ref([]);
 
@@ -178,5 +198,17 @@ useHead({
   ],
 });
 </script>
+
+<style scoped>
+.custom-file-input.selected:lang(en)::after {
+  content: "" !important;
+}
+.custom-file {
+  overflow: hidden;
+}
+.custom-file-input {
+  white-space: nowrap;
+}
+</style>
 
 <style scoped src="~/assets/css/home.css"></style>
