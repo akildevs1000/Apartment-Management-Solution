@@ -1,4 +1,5 @@
 const db = require("../models");
+const fs = require("fs");
 
 const Flat = db.flat;
 const Floor = db.floor;
@@ -72,6 +73,28 @@ const destroy = async (req, res) => {
 };
 
 const store = (req, res) => {
+  const base64Data = req.body.photo;
+
+  // Remove the data:image/png;base64, prefix to get the Base64 encoded data
+  const base64DataWithoutPrefix = base64Data.replace(
+    /^data:image\/\w+;base64,/,
+    ""
+  );
+
+  // Create a Buffer object from the Base64 encoded data
+  const buffer = Buffer.from(base64DataWithoutPrefix, "base64");
+
+  // Write the decoded image data to a file
+  fs.writeFile("decoded-image." + req.body.ext, buffer, (err) => {
+    if (err) throw err;
+    
+    res.send({
+      status: true,
+      message: "Image file saved!",
+    });
+  });
+
+  return;
   upload(req, res, async (err) => {
     try {
       if (err) {
