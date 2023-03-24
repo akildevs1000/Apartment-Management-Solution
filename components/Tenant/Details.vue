@@ -1,106 +1,112 @@
 <template>
   <div>
-    <div class="card">
-      <div class="card-header">Tenant</div>
-
-      <div class="card-body">
-        <form @submit.prevent="submit" class="row g-3">
-          <div class="col-md-4">
-            <label class="form-label">Name</label>
-            <input
-              required
-              v-model="payload.name"
-              type="text"
-              class="form-control"
-            />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Mobile</label>
-            <input
-              required
-              v-model="payload.mobile"
-              type="number"
-              class="form-control"
-            />
-          </div>
-          <div class="col-md-4">
-            <label class="form-label">Telephone/Landline</label>
-            <input
-              required
-              v-model="payload.tel"
-              type="number"
-              class="form-control"
-            />
-          </div>
-
-          <div class="col-4">
-            <label for="formFile" class="form-label">Photo</label>
-            <input class="form-control" type="file" id="formFile" />
-          </div>
-          <div class="col-4">
-            <label class="form-label">Email</label>
-            <input
-              required
-              v-model="payload.email"
-              type="email"
-              class="form-control"
-            />
-          </div>
-          <div class="col-4">
-            <label class="form-label">Gender</label>
-            <select required v-model="payload.gender" class="form-select">
-              <option selected>Choose...</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">Floor</label>
-            <select
-              required
-              v-model="payload.floor_id"
-              @change="getFlatsFloorId"
-              class="form-select"
-            >
-              <option selected value="">Choose...</option>
-              <option
-                v-for="(item, index) in floors"
-                :key="index"
-                :value="item.id"
-              >
-                {{ item.floor_number }}
-              </option>
-            </select>
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">Flat</label>
-            <select required v-model="payload.flat_id" class="form-select">
-              <option selected>Choose...</option>
-              <option
-                v-for="(item, index) in flats"
-                :key="index"
-                :value="item.id"
-              >
-                {{ item.flat_number }}
-              </option>
-            </select>
-          </div>
-
-          <div class="col-md-3">
-            <label class="form-label">From</label>
-            <input required v-model="payload.from" type="date" class="form-control" />
-          </div>
-          <div class="col-md-3">
-            <label class="form-label">To</label>
-            <input required v-model="payload.to" type="date" class="form-control" />
-          </div>
-
-          <div class="col-12">
-            <button type="submit" class="btn btn-primary">Submit</button>
-          </div>
-        </form>
+    <div class="row g-3">
+      <div class="col-md-4 col-sm-6 col-12">
+        <label class="form-label">Name</label>
+        <input
+          type="text"
+          v-model="payload.name"
+          class="form-control input-default input-default"
+        />
+      </div>
+      <div class="col-md-4 col-sm-6 col-12">
+        <label class="form-label">Floor</label>
+        <select
+          id="inputState"
+          class="form-control input-default"
+          v-model="payload.floor_id"
+          @change="getFlatsFloorId"
+        >
+          <option v-for="(item, index) in floors" :key="index" :value="item.id">
+            {{ item.floor_number }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-4 col-sm-6 col-12">
+        <label class="form-label">Flat</label>
+        <select
+          class="form-control input-default"
+          required
+          v-model="payload.flat_id"
+        >
+          <option v-for="(item, index) in flats" :key="index" :value="item.id">
+            {{ item.flat_number }}
+          </option>
+        </select>
+      </div>
+      <div class="col-md-4 col-sm-6 col-12">
+        <label for="formFile" class="form-label">Photo</label>
+        <input
+          class="form-control form-control-file"
+          type="file"
+          id="formFile"
+          @change="onFileSelected"
+        />
+      </div>
+      <div class="col-md-4 col-sm-6 col-12">
+        <label class="form-label">Email</label>
+        <input
+          required
+          v-model="payload.email"
+          type="email"
+          class="form-control input-default"
+        />
+      </div>
+      <div class="col-md-4 col-sm-6 col-12">
+        <label class="form-label">Gender</label>
+        <select
+          class="form-control input-default"
+          required
+          v-model="payload.gender"
+        >
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+      <div class="col-md-6 col-sm-6 col-12">
+        <label class="form-label">Telephone/Landline</label>
+        <input
+          type="number"
+          v-model="payload.tel"
+          class="form-control input-default"
+        />
+      </div>
+      <div class="col-md-6 col-sm-6 col-12">
+        <label class="form-label">Mobile</label>
+        <input
+          type="number"
+          v-model="payload.mobile"
+          class="form-control input-default"
+        />
+      </div>
+      <div class="col-md-6 col-sm-6 col-12">
+        <label class="form-label">From</label>
+        <input
+          type="date"
+          v-model="payload.from"
+          class="form-control input-default"
+        />
+      </div>
+      <div class="col-md-6 col-sm-6 col-12">
+        <label class="form-label">To</label>
+        <input
+          type="date"
+          v-model="payload.to"
+          class="form-control input-default"
+        />
+      </div>
+      <div class="col-12">
+        <img
+          v-if="payload.photo"
+          :src="payload.photo"
+          height="200"
+          width="200"
+          alt="Base64 Image"
+        />
+      </div>
+      <div class="col-12">
+        <button @click="submit()" class="btn btn-primary mt-2">Save</button>
       </div>
     </div>
   </div>
@@ -122,22 +128,31 @@ let payload = ref({
   mobile: "",
   from: "",
   to: "",
+  ext: "",
 });
 
+function onFileSelected(event) {
+  const file = event.target.files[0];
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => {
+    payload.value.photo = reader.result;
+    payload.value.ext = file.name.substring(file.name.lastIndexOf(".") + 1);
+  };
+}
+
 async function submit() {
+  console.log(payload.value);
   const { data, errors } = await useFetch("http://localhost:8080/tennant", {
     method: "post",
     body: payload.value,
   });
-
   if (data.value.status) {
     alert(data.value.message);
     return;
   }
-
   alert("Tenant cannot create");
 }
-
 let flats = ref([]);
 
 function getFlatsFloorId() {
@@ -146,11 +161,8 @@ function getFlatsFloorId() {
     flats.value = [];
     return false;
   }
-
   let selectedFloor = floors.value.find((e) => e.id == floor_id).flats;
-
   flats.value = [];
-
   selectedFloor.map((e) => [
     flats.value.push({ id: e.id, flat_number: e.flat_number }),
   ]);

@@ -1,12 +1,35 @@
 <template>
   <div>
-    <div class="tab-content container mt-4" id="myTabContent">
-      <div class="tab-pane fade show active" id="details">
-        <TenantDetails />
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card shadow-none">
+          <div class="card-body">
+            <div class="tab-content" id="myTabContent">
+              <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" v-for="item in tabMenu" :key="item.id">
+                  <button
+                    class="nav-link"
+                    :class="item.status"
+                    data-bs-toggle="tab"
+                    :data-bs-target="item.id"
+                    type="button"
+                  >
+                    {{ item.title }}
+                  </button>
+                </li>
+              </ul>
+              <div class="tab-pane fade show active mx-2 my-4" id="details">
+                <TenantDetails />
+              </div>
+              <div class="tab-pane fade mx-2 my-4" id="members">
+                <TenantMembers />
+              </div>
+              <div class="tab-pane fade mx-2 my-4" id="vehicles">Vehicles</div>
+              <div class="tab-pane fade mx-2 my-4" id="visitors">Visitors</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="tab-pane fade" id="members">Members</div>
-      <div class="tab-pane fade" id="vehicles">Vehicles</div>
-      <div class="tab-pane fade" id="visitors">Visitors</div>
     </div>
   </div>
 </template>
