@@ -2,7 +2,7 @@
   <div>
     <div class="row g-3">
       <div class="col-12">
-        <button @click="submit()" class="btn btn-success mt-2 float-end">
+        <button @click="addMembers()" class="btn btn-success mt-2 float-end">
           <i class="fa fa-plus-circle text-white"></i>
         </button>
       </div>
@@ -33,13 +33,8 @@
           id="inputState"
           class="form-control input-default"
           v-model="payload.relation"
-          @change="getFlatsFloorId"
         >
-          <option
-            v-for="(item, index) in relations"
-            :key="index"
-            :value="item.id"
-          >
+          <option v-for="item in relations" :value="item">
             {{ item }}
           </option>
         </select>
@@ -51,18 +46,37 @@
     </div>
 
     <!-- ------------------------ -->
-    <div class="row g-3 mt-1">
+    <div
+      class="row g-3 mt-1"
+      v-for="(item, index) in selectedMembers"
+      :key="index"
+    >
       <div class="col-md-3 col-sm-6 col-12">
         <label class="form-label">Name</label>
-        <input type="text" class="form-control input-default input-default" />
+        <input
+          :value="item.name"
+          type="text"
+          readonly
+          class="form-control input-default input-default"
+        />
       </div>
       <div class="col-md-2 col-sm-6 col-12">
         <label class="form-label">Gender</label>
-        <input type="text" class="form-control input-default input-default" />
+        <input
+          :value="item.gender"
+          type="text"
+          readonly
+          class="form-control input-default input-default"
+        />
       </div>
       <div class="col-md-2 col-sm-6 col-12">
         <label class="form-label">Relation</label>
-        <input type="text" class="form-control input-default input-default" />
+        <input
+          :value="item.relation"
+          type="text"
+          readonly
+          class="form-control input-default input-default"
+        />
       </div>
       <div class="col-2">
         <img
@@ -74,7 +88,11 @@
         />
       </div>
       <div class="col-md-2 col-sm-6 col-12">
-        <i class="fa fa-trash text-danger" style="margin: 41px 0 0 0"></i>
+        <i
+          class="fa fa-trash text-danger"
+          @click="removeMember(item)"
+          style="margin: 41px 0 0 0; cursor: pointer"
+        ></i>
       </div>
     </div>
 
@@ -93,16 +111,9 @@ const { data: floors } = await useFetch("http://localhost:8080/floor");
 
 let payload = ref({
   name: "",
-  floor_id: "",
-  flat_id: "",
-  photo: "",
-  email: "",
   gender: "",
-  tel: "",
-  mobile: "",
-  from: "",
-  to: "",
-  ext: "",
+  relation: "",
+  photo: "",
 });
 
 let relations = ref([
@@ -116,6 +127,8 @@ let relations = ref([
   "Daughter",
 ]);
 
+let selectedMembers = ref([]);
+
 function onFileSelected(event) {
   const file = event.target.files[0];
   const reader = new FileReader();
@@ -124,6 +137,19 @@ function onFileSelected(event) {
     payload.value.photo = reader.result;
     payload.value.ext = file.name.substring(file.name.lastIndexOf(".") + 1);
   };
+}
+
+function addMembers() {
+  const member = {
+    name: payload.value.name,
+    gender: payload.value.gender,
+    photo: payload.value.photo,
+    relation: payload.value.relation,
+  };
+
+  selectedMembers.value.push(member);
+
+  console.log(selectedMembers.value);
 }
 
 async function submit() {
@@ -151,6 +177,10 @@ function getFlatsFloorId() {
   selectedFloor.map((e) => [
     flats.value.push({ id: e.id, flat_number: e.flat_number }),
   ]);
+}
+
+function removeMember(index) {
+  selectedMembers.value.pop(index);
 }
 
 useHead({
