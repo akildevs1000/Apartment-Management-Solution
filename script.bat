@@ -1,3 +1,2 @@
-start npm run dev
-timeout /t 10
-start npm run serve
+start /wait npm run serve
+start /wait npm run prod

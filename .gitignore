@@ -127,3 +127,6 @@ out
 .pnp.*
 .vscode/settings.json
 uploads/
+dist/
+.output/
+.vscode/
