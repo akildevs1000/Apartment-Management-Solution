@@ -1,3 +1,6 @@
+
+const fs = require('fs');
+
 const destroy = async (Member, col, id) => {
   let qs = {};
   qs[col] = id;
