@@ -2,17 +2,24 @@
   <div>
     <div class="row g-3">
       <div class="col-md-4 col-sm-6 col-12">
-        <label class="form-label">Name</label>
+        <label class="form-label"
+          >Name
+          <span class="text-danger">*</span>
+        </label>
         <input
           type="text"
           v-model="payload.name"
           class="form-control input-default input-default"
         />
-        <div class="text-danger" v-if="isSubmit">{{ Valid("name") }}</div>
+        <div class="text-danger" v-if="errors && errors.name">
+          {{ errors.name }}
+        </div>
       </div>
 
       <div class="col-md-4 col-sm-6 col-12">
-        <label class="form-label">Floor</label>
+        <label class="form-label"
+          >Floor<span class="text-danger">*</span></label
+        >
         <select
           id="inputState"
           class="form-control input-default"
@@ -23,10 +30,12 @@
             {{ item.floor_number }}
           </option>
         </select>
-        <div class="text-danger" v-if="isSubmit">{{ Valid("floor_id") }}</div>
+        <div class="text-danger" v-if="errors && errors.floor_id">
+          {{ errors.floor_id }}
+        </div>
       </div>
       <div class="col-md-4 col-sm-6 col-12">
-        <label class="form-label">Flat</label>
+        <label class="form-label">Flat<span class="text-danger">*</span></label>
         <select
           class="form-control input-default"
           required
@@ -36,17 +45,23 @@
             {{ item.flat_number }}
           </option>
         </select>
-        <div class="text-danger" v-if="isSubmit">{{ Valid("flat_id") }}</div>
+        <div class="text-danger" v-if="errors && errors.flat_id">
+          {{ errors.flat_id }}
+        </div>
       </div>
       <div class="col-md-4 col-sm-6 col-12">
-        <label for="formFile" class="form-label">Photo</label>
+        <label for="formFile" class="form-label"
+          >Photo<span class="text-danger">*</span></label
+        >
         <input
           class="form-control form-control-file"
           type="file"
           id="formFile"
           @change="onFileSelected"
         />
-        <div class="text-danger" v-if="isSubmit">{{ Valid("photo") }}</div>
+        <div class="text-danger" v-if="errors && errors.photo">
+          {{ errors.photo }}
+        </div>
       </div>
       <div class="col-md-4 col-sm-6 col-12">
         <label class="form-label">Email</label>
@@ -56,9 +71,14 @@
           type="email"
           class="form-control input-default"
         />
+        <div class="text-danger" v-if="errors && errors.email">
+          {{ errors.email }}
+        </div>
       </div>
       <div class="col-md-4 col-sm-6 col-12">
-        <label class="form-label">Gender</label>
+        <label class="form-label"
+          >Gender<span class="text-danger">*</span></label
+        >
         <select
           class="form-control input-default"
           required
@@ -78,31 +98,39 @@
         />
       </div>
       <div class="col-md-6 col-sm-6 col-12">
-        <label class="form-label">Mobile</label>
+        <label class="form-label"
+          >Mobile<span class="text-danger">*</span></label
+        >
         <input
           type="number"
           v-model="payload.mobile"
           class="form-control input-default"
         />
-        <div class="text-danger" v-if="isSubmit">{{ Valid("mobile") }}</div>
+        <div class="text-danger" v-if="errors && errors.mobile">
+          {{ errors.mobile }}
+        </div>
       </div>
       <div class="col-md-6 col-sm-6 col-12">
-        <label class="form-label">From</label>
+        <label class="form-label">From<span class="text-danger">*</span></label>
         <input
           type="date"
           v-model="payload.from"
           class="form-control input-default"
         />
-        <div class="text-danger" v-if="isSubmit">{{ Valid("from") }}</div>
+        <div class="text-danger" v-if="errors && errors.from">
+          {{ errors.from }}
+        </div>
       </div>
       <div class="col-md-6 col-sm-6 col-12">
-        <label class="form-label">To</label>
+        <label class="form-label">To<span class="text-danger">*</span></label>
         <input
           type="date"
           v-model="payload.to"
           class="form-control input-default"
         />
-        <div class="text-danger" v-if="isSubmit">{{ Valid("to") }}</div>
+        <div class="text-danger" v-if="errors && errors.to">
+          {{ errors.to }}
+        </div>
       </div>
       <div class="col-12">
         <img
@@ -121,9 +149,11 @@
 </template>
 
 <script setup>
+const { rules } = useTenantValidations();
+
 const { data: floors } = await useFetch("http://localhost:8080/floor");
 
-let isSubmit = ref(false);
+let errors = ref({});
 
 let payload = ref({
   name: "",
@@ -158,21 +188,6 @@ function onFileSelected(event) {
   };
 }
 
-// function gg() {
-//   console.log(payload.value.name);
-// }
-
-function Valid(attr = "") {
-  isSubmit.value = true;
-  if (!payload.value[attr]) {
-    let res = title(attr) + " field is required";
-    return res;
-  }
-
-  isSubmit.value = true;
-  return true;
-}
-
 function title(str) {
   let res =
     str.charAt(0).toUpperCase() +
@@ -183,35 +198,20 @@ function title(str) {
 
 async function submit() {
   try {
-    let arr = [
-      Valid("name"),
-      Valid("floor_id"),
-      Valid("flat_id"),
-      Valid("photo"),
-      Valid("mobile"),
-      Valid("from"),
-      Valid("to"),
-    ];
+    errors.value = rules(payload.value);
+    
 
-    if (!arr.includes(true)) {
-      alert("gg");
-      return;
-    }
+    if (Object.keys(errors.value).length === 0) {
+      const { data, errors } = await useFetch("http://localhost:8080/tennant", {
+        method: "post",
+        body: payload.value,
+      });
 
-    const { data, errors } = await useFetch("http://localhost:8080/tennant", {
-      method: "post",
-      body: payload.value,
-    });
-
-    if (!payload.value.ext) {
-      alert("Select Image");
-      return;
-    }
-
-    if (data.value && data.value.status) {
-      alert("Tenant create");
-      console.log(data.value);
-      return;
+      if (data.value && data.value.status) {
+        alert("Tenant created");
+        console.log(data.value);
+        return;
+      }
     }
   } catch (err) {
     alert("Tenant cannot create");
@@ -226,6 +226,8 @@ function getFlatsFloorId() {
     flats.value = [];
     return false;
   }
+
+  console.log(floors);
   let selectedFloor = floors.value.find((e) => e.id == floor_id).flats;
   flats.value = [];
   selectedFloor.map((e) => [

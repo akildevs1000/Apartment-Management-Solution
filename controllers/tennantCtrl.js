@@ -1,11 +1,11 @@
 const db = require("../models");
-const fs = require("fs");
+
+const { processPhoto } = require("../helpers/utils.js");
 
 const Flat = db.flat;
 const Floor = db.floor;
 const Tennant = db.tennant;
 
-const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 
 const index = async (req, res) => {
@@ -36,6 +36,7 @@ const show = async (req, res) => {
 };
 
 const destroy = async (req, res) => {
+
   try {
     const tennant = await Tennant.destroy({
       where: {
@@ -52,28 +53,7 @@ const destroy = async (req, res) => {
   }
 };
 
-const processPhoto = async (photo, imageName) => {
-  const base64DataWithoutPrefix = photo.replace(/^data:image\/\w+;base64,/, "");
-
-  const buffer = Buffer.from(base64DataWithoutPrefix, "base64");
-
-  // creating image
-  fs.writeFile("./uploads/images/" + imageName, buffer, (err) =>
-    !err ? true : false
-  );
-};
-
 const store = async ({ body }, res) => {
-  const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
-
-  if (!allowedExtensions.includes(body.ext)) {
-    let response = {
-      status: false,
-      message: "Invalid file extension",
-    };
-    return res.status(422).json(response);
-  }
-
   try {
     let imageName = `${uuidv4()}.${body.ext}`;
     processPhoto(body.photo, imageName);

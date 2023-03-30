@@ -10,6 +10,7 @@ const testCtrl = require("./controllers/testController.js");
 const floorCtrl = require("./controllers/floorController.js");
 const flatCtrl = require("./controllers/flatController.js");
 const tennantCtrl = require("./controllers/tennantCtrl.js");
+const memberCtrl = require("./controllers/memberCtrl.js");
 
 app.use(
   cors({
@@ -37,6 +38,10 @@ app.get("/tennant", tennantCtrl.index);
 app.get("/tennant/:id", tennantCtrl.show);
 app.delete("/tennant/:id", tennantCtrl.destroy);
 app.post("/tennant", tennantCtrl.store);
+
+app.get("/member/:id", memberCtrl.show);
+app.delete("/member/:id", memberCtrl.destroy);
+app.post("/member/:id", memberCtrl.store);
 
 app.listen(port, () => {
   console.log(`Backend app listening on port http://localhost:${port}`);

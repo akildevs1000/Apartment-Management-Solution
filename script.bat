@@ -1,2 +1,5 @@
-start /wait npm run serve
-start /wait npm run prod
+@set PATH=node;%PATH%
+     
+start npm run dev
+
+start npm run serve
