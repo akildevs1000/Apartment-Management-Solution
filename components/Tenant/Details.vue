@@ -149,7 +149,10 @@
 </template>
 
 <script setup>
-const { rules } = useTenantValidations();
+import * as Yup from "yup";
+const { apiBaseURL } = useRuntimeConfig();
+
+const { useTitle, usePhotoExtValidation } = useUtils();
 
 const { data: floors } = await useFetch("http://localhost:8080/floor");
 
@@ -168,54 +171,62 @@ let payload = ref({
   to: "",
   ext: "",
 });
+const isDisabled = computed(() => {
+  return Object.keys(errors).length !== 0;
+});
+function onFileSelected(e) {
+  let { reader } = usePhotoExtValidation(e);
 
-function onFileSelected(event) {
-  const file = event.target.files[0];
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
   reader.onload = () => {
-    payload.value.photo = reader.result;
-    let ext = file.name.substring(file.name.lastIndexOf(".") + 1);
-
-    const allowedExtensions = ["jpg", "jpeg", "png", "gif"];
-
-    if (!allowedExtensions.includes(ext)) {
-      alert("Invalid file extension");
+    if (reader && reader.extError) {
+      errors.value.photo = reader.extErrorMessage;
       return;
     }
 
-    payload.value.ext = file.name.substring(file.name.lastIndexOf(".") + 1);
+    payload.value.photo = reader.result;
+    payload.value.ext = reader.ext;
   };
 }
 
-function title(str) {
-  let res =
-    str.charAt(0).toUpperCase() +
-    str.substring(1, str.length).replace("_", " ");
-  const words = res.split(" ");
-  return words[0];
-}
-
 async function submit() {
+
+  errors.value = {};
+
   try {
-    errors.value = rules(payload.value);
-    
+    const schema = Yup.object({
+      name: Yup.string().required().min(3).max(20),
+      email: Yup.string().email().required(),
+      floor_id: Yup.number().typeError("floor is a required field"),
+      flat_id: Yup.number().typeError("flat is a required field"),
+      photo: Yup.string().required(),
+      gender: Yup.string().required(),
+      mobile: Yup.string().required(),
+      from: Yup.string().required(),
+      to: Yup.string().required().optional(),
+    });
 
-    if (Object.keys(errors.value).length === 0) {
-      const { data, errors } = await useFetch("http://localhost:8080/tennant", {
-        method: "post",
-        body: payload.value,
-      });
+    await schema.validate(payload.value, { abortEarly: false });
 
-      if (data.value && data.value.status) {
-        alert("Tenant created");
-        console.log(data.value);
-        return;
+    // Submit form data to server
+    const { data, errors } = await useFetch(`${apiBaseURL}/tennant`, {
+      method: "post",
+      body: payload.value,
+    });
+
+    if (data.value && data.value.status) {
+      alert("Tenant created");
+      console.log(data.value);
+      return;
+    }
+  } catch ({ inner }) {
+    const processedKeys = {};
+    for (const obj of inner) {
+      const key = obj.path;
+      if (!processedKeys[key]) {
+        processedKeys[key] = true;
+        errors.value[key] = useTitle(obj.message);
       }
     }
-  } catch (err) {
-    alert("Tenant cannot create");
-    console.log(err);
   }
 }
 let flats = ref([]);
