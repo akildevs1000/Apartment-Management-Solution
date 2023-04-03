@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "postgres",
-    "password": "tZqsls7URjNC0aF",
-    "database": "ams",
-    "host": "127.0.0.1",
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "",
     "dialect": "postgres"
   },
   "test": {
