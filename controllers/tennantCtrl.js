@@ -1,12 +1,10 @@
 const db = require("../models");
-
-const { processPhoto } = require("../helpers/utils.js");
+const valdiationSchema = require("../validations/tenantValidation");
+const { errors, processPhoto } = require("../helpers/utils.js");
 
 const Flat = db.flat;
 const Floor = db.floor;
 const Tennant = db.tennant;
-
-const { v4: uuidv4 } = require("uuid");
 
 const index = async (req, res) => {
   res.send(
@@ -55,14 +53,16 @@ const destroy = async (req, res) => {
 
 const store = async ({ body }, res) => {
   try {
-    let imageName = `${uuidv4()}.${body.ext}`;
-    processPhoto(body.photo, imageName);
-    body.photo = imageName;
-    await Tennant.create(body);
+    const validated = await valdiationSchema.validate(body, {
+      abortEarly: false,
+    });
+    validated.photo = await processPhoto(body.photo, body.ext);
+
+    await Tennant.create(validated);
     let response = { status: true, message: "Tennant created" };
     return res.status(200).json(response);
-  } catch ({ message }) {
-    res.status(500).json({ status: false, message });
+  } catch ({ inner }) {
+    res.status(400).send(await errors(inner));
   }
 };
 

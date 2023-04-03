@@ -5,13 +5,6 @@ const bodyParser = require("body-parser");
 const app = express();
 const port = 8080;
 
-// controllers
-const testCtrl = require("./controllers/testController.js");
-const floorCtrl = require("./controllers/floorController.js");
-const flatCtrl = require("./controllers/flatController.js");
-const tennantCtrl = require("./controllers/tennantCtrl.js");
-const memberCtrl = require("./controllers/memberCtrl.js");
-
 app.use(
   cors({
     origin: "*",
@@ -21,6 +14,17 @@ app.use(
 app.use(express.json({ limit: "50mb" }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// controllers
+const testCtrl = require("./controllers/testController.js");
+const floorCtrl = require("./controllers/floorController.js");
+const flatCtrl = require("./controllers/flatController.js");
+const tennantCtrl = require("./controllers/tennantCtrl.js");
+const memberCtrl = require("./controllers/memberCtrl.js");
+
+// app.get("/test", testCtrl.test);
+
+// Define a schema for the request body using Yup
 
 app.get("/test", testCtrl.test);
 

@@ -193,7 +193,7 @@ async function submit() {
   errors.value = {};
 
   try {
-    const schema = Yup.object({
+    const schema = Yup.object().shape({
       name: Yup.string().required().min(3).max(20),
       email: Yup.string().email().required(),
       floor_id: Yup.number().typeError("floor is a required field"),
