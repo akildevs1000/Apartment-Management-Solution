@@ -1,10 +1,11 @@
-const { parsed: dotenv } = require("dotenv").config();
+const { parsed: { USER, PASSWORD, DATABASE, HOST, DRIVER } } = require("dotenv").config();
+
 module.exports = {
   development: {
-    username: dotenv.USERNAME,
-    password: dotenv.PASSWORD,
-    database: dotenv.DATABASE,
-    host: dotenv.HOST,
-    dialect: dotenv.DRIVER,
+    username: USER,
+    password: PASSWORD,
+    database: DATABASE,
+    host: HOST,
+    dialect: DRIVER,
   },
 };

@@ -22,6 +22,10 @@ const flatCtrl = require("./controllers/flatController.js");
 const tennantCtrl = require("./controllers/tennantCtrl.js");
 const memberCtrl = require("./controllers/memberCtrl.js");
 
+const apartmentCtrl = require("./controllers/apartmentCtrl.js");
+const roleCtrl = require("./controllers/roleCtrl.js");
+
+
 // app.get("/test", testCtrl.test);
 
 // Define a schema for the request body using Yup
@@ -46,6 +50,19 @@ app.post("/tennant", tennantCtrl.store);
 app.get("/member/:id", memberCtrl.show);
 app.delete("/member/:id", memberCtrl.destroy);
 app.post("/member/:id", memberCtrl.store);
+
+// role
+
+app.get("/role", roleCtrl.index);
+app.get("/role/:id", roleCtrl.show);
+app.delete("/role/:id", roleCtrl.destroy);
+app.post("/role", roleCtrl.store);
+
+// apartment
+app.get("/apartment", apartmentCtrl.index);
+app.get("/apartment/:id", apartmentCtrl.show);
+app.delete("/apartment/:id", apartmentCtrl.destroy);
+app.post("/apartment", apartmentCtrl.store);
 
 app.listen(port, () => {
   console.log(`Backend app listening on port http://localhost:${port}`);

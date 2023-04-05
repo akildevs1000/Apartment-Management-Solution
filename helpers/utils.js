@@ -12,6 +12,12 @@ const destroy = async (Member, col, id) => {
   }
 };
 
+const checkExistence = (Model, col) => async (v) => {
+  let qs = {};
+  qs[col] = v;
+  return !(await Model.findOne({ where: qs }));
+};
+
 const processPhoto = async (photo, ext) => {
   let base64DataWithoutPrefix = photo.replace(/^data:image\/\w+;base64,/, "");
 
@@ -43,4 +49,5 @@ module.exports = {
   destroy,
   processPhoto,
   errors,
+  checkExistence
 };
