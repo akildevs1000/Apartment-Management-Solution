@@ -11,8 +11,7 @@
     "prod": "node .output/server/index.mjs",
     "dev": "nuxt dev",
     "migrate": "npx sequelize-cli db:migrate",
-    "seed" : "npx sequelize-cli db:seed:all"
-
+    "seed": "npx sequelize-cli db:seed:all"
   },
   "dependencies": {
     "body-parser": "^1.20.2",

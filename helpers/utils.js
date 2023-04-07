@@ -2,15 +2,6 @@ const fs = require("fs");
 
 const { v4: uuidv4 } = require("uuid");
 
-const destroy = async (Member, col, id) => {
-  let qs = {};
-  qs[col] = id;
-  try {
-    await Member.destroy({ where: qs });
-  } catch (error) {
-    return { message: "Failed to retrieve data", error };
-  }
-};
 
 const checkExistence = (Model, col) => async (v) => {
   let qs = {};
@@ -45,9 +36,25 @@ const errors = async (inner) => {
   return errors;
 };
 
+const paginate = async ({ page = 1, per_page = 5, orderBy = "DESC" }) => {
+  return {
+    offset: (page - 1) * per_page,
+    limit: per_page,
+    order: [["createdAt", orderBy]],
+  };
+};
+
+const toTitle = (str) => {
+  return (
+    str.charAt(0).toUpperCase() +
+    str.substring(1, str.length).replace("_", " ")
+  );
+};
+
 module.exports = {
-  destroy,
   processPhoto,
   errors,
-  checkExistence
+  paginate,
+  checkExistence,
+  toTitle
 };

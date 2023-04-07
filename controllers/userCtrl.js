@@ -1,6 +1,6 @@
-const { role: Model } = require("../models");
+const { user: Model } = require("../models");
 
-const valdiationSchema = require("../validations/roleValidation");
+const valdiationSchema = require("../validations/userValidation");
 const { errors, paginate, toTitle } = require("../helpers/utils.js");
 
 const index = async ({ query }, res) => {

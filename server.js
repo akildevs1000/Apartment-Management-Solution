@@ -24,6 +24,7 @@ const memberCtrl = require("./controllers/memberCtrl.js");
 
 const apartmentCtrl = require("./controllers/apartmentCtrl.js");
 const roleCtrl = require("./controllers/roleCtrl.js");
+const userCtrl = require("./controllers/userCtrl.js");
 
 
 // app.get("/test", testCtrl.test);
@@ -48,19 +49,28 @@ app.delete("/tennant/:id", tennantCtrl.destroy);
 app.post("/tennant", tennantCtrl.store);
 
 app.get("/member/:id", memberCtrl.show);
-app.delete("/member/:id", memberCtrl.destroy);
 app.post("/member/:id", memberCtrl.store);
 
 // role
 
 app.get("/role", roleCtrl.index);
 app.get("/role/:id", roleCtrl.show);
+app.put("/role/:id", roleCtrl.update);
 app.delete("/role/:id", roleCtrl.destroy);
 app.post("/role", roleCtrl.store);
+
+
+// user
+app.get("/user", userCtrl.index);
+app.get("/user/:id", userCtrl.show);
+app.put("/user/:id", userCtrl.update);
+app.delete("/user/:id", userCtrl.destroy);
+app.post("/user", userCtrl.store);
 
 // apartment
 app.get("/apartment", apartmentCtrl.index);
 app.get("/apartment/:id", apartmentCtrl.show);
+app.put("/apartment/:id", apartmentCtrl.update);
 app.delete("/apartment/:id", apartmentCtrl.destroy);
 app.post("/apartment", apartmentCtrl.store);
 

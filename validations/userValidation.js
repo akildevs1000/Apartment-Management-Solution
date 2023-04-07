@@ -7,7 +7,7 @@ const schema = Yup.object().shape({
     email: Yup
         .string()
         .required()
-        .test('unique', 'Email already exists', checkExistence(Role, "role"))
+        .test('unique', 'Email already exists', checkExistence(User, "email"))
         .min(3)
         .max(20),
     password: Yup

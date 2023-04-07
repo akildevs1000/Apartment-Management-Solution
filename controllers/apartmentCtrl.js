@@ -1,6 +1,6 @@
-const { role: Model } = require("../models");
+const { apartment: Model } = require("../models");
 
-const valdiationSchema = require("../validations/roleValidation");
+const valdiationSchema = require("../validations/apartmentValidation");
 const { errors, paginate, toTitle } = require("../helpers/utils.js");
 
 const index = async ({ query }, res) => {
@@ -22,9 +22,9 @@ const index = async ({ query }, res) => {
 
 const show = async (req, res) => {
     try {
-        const model = await Model.findOne();
-        if (model) {
-            res.json(model);
+        const apartment = await Model.findOne();
+        if (apartment) {
+            res.json(apartment);
         } else {
             res.status(404).json({ message: `${toTitle(Model.name)} not found` });
         }
