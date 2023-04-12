@@ -9,22 +9,26 @@ const schema = Yup.object().shape({
         .required()
         .test('unique', 'Email already exists', checkExistence(User, "email"))
         .min(3)
-        .max(20),
+        .max(50),
     password: Yup
         .string()
+        .required()
         .min(8, 'Password must be at least 8 characters long.')
         .matches(/[a-z]/, 'Password must contain at least one lowercase letter.')
         .matches(/[A-Z]/, 'Password must contain at least one uppercase letter.')
         .matches(/[0-9]/, 'Password must contain at least one number.'),
     mobile: Yup
-        .integer()
+        .string()
         .required()
-        .test('unique', 'Email already exists', checkExistence(User, "mobile")),
+        .test('unique', 'Mobile already exists', checkExistence(User, "mobile")),
     photo: Yup.string().required(),
+    ext: Yup.string().required(),
     role_id: Yup
+        .number()
         .integer()
         .required(),
     apartment_id: Yup
+        .number()
         .integer()
         .required()
 });

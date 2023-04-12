@@ -1,6 +1,14 @@
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const auth = require('./middlewares/auth');
+
+const fs = require('fs');
+const tokens = JSON.parse(fs.readFileSync('./tokens.json', 'utf-8'));
+require('dotenv').config();
+
 
 const app = express();
 const port = 8080;
@@ -14,6 +22,46 @@ app.use(
 app.use(express.json({ limit: "50mb" }));
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.post('/login', (req, res) => {
+  // Get the user credentials from the request body
+  const { username, password } = req.body;
+
+  // Check if the user credentials are valid
+  if (username !== 'admin' || password !== 'password') {
+    return res.status(401).json({ message: 'Invalid credentials' });
+  }
+
+  // Generate a JWT token
+  const token = jwt.sign({ username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+
+  // Store the token in a JSON file
+  tokens.push(token);
+  fs.writeFileSync('./tokens.json', JSON.stringify(tokens));
+
+  // Return the token in the response
+  res.json({ token });
+});
+
+app.post('/logout', auth, ({ header: { authorization } }, res) => {
+
+  tokens.splice(tokens.indexOf(authorization.split(" ")[1]), 1);
+
+  fs.writeFileSync('./tokens.json', JSON.stringify(tokens));
+
+  res.json({ message: 'Logged out' });
+});
+
+app.get("/me", auth, ({ user }, res) => res.json(user));
+
+app.get("/test", auth, (req, res) => {
+  res.json({ success: "true", user: req.user });
+});
+
+const generateAccessToken = ({ id, username, email }) => {
+  return jwt.sign({ id, username, email }, 'secret_key', { expiresIn: '59s' });
+}
 
 // controllers
 const testCtrl = require("./controllers/testController.js");
@@ -74,6 +122,4 @@ app.put("/apartment/:id", apartmentCtrl.update);
 app.delete("/apartment/:id", apartmentCtrl.destroy);
 app.post("/apartment", apartmentCtrl.store);
 
-app.listen(port, () => {
-  console.log(`Backend app listening on port http://localhost:${port}`);
-});
+app.listen(port, () => console.log(`App listening at http://localhost:${port}`));

@@ -59,7 +59,7 @@ const store = async ({ body }, res) => {
     validated.photo = await processPhoto(body.photo, body.ext);
 
     await Tennant.create(validated);
-    let response = { status: true, message: "Tennant created" };
+    let response = { status: true, message: "Tennant has beed inserted" };
     return res.status(200).json(response);
   } catch ({ inner }) {
     res.status(400).send(await errors(inner));

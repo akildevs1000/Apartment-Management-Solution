@@ -1,7 +1,7 @@
 const { user: Model } = require("../models");
 
 const valdiationSchema = require("../validations/userValidation");
-const { errors, paginate, toTitle } = require("../helpers/utils.js");
+const { errors, processPhoto, paginate, toTitle } = require("../helpers/utils.js");
 
 const index = async ({ query }, res) => {
     try {
@@ -64,9 +64,13 @@ const store = async ({ body }, res) => {
         const validated = await valdiationSchema.validate(body, {
             abortEarly: false,
         });
-        res.send({ message: `${toTitle(Model.name)} has beed inserted`, record: await Model.create(validated) });
-    } catch ({ inner }) {
-        res.status(400).send(await errors(inner));
+        validated.photo = await processPhoto(body.photo, body.ext);
+
+        res.send({ status: true, message: `${toTitle(Model.name)} has beed inserted`, record: await Model.create(validated) });
+    } catch (Error) {
+        let [status, err] = Error && Error.inner ? [400, await errors(Error.inner)] : [500, { ServerError: Error }];
+
+        res.status(status).send(err);
     }
 };
 
